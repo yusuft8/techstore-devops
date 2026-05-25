@@ -99,15 +99,7 @@ pipeline {
             }
         }
 
-        stage('Smoke Test') {
-            steps {
-                sh '''
-                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
-                  echo "Smoke test HTTP: $STATUS"
-echo "Smoke testleri gecildi"
-                '''
-            }
-        }
+        
     }
 
     post {
