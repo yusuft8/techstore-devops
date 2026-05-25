@@ -36,6 +36,7 @@ pipeline {
                     . venv/bin/activate
                     mkdir -p test-results
                     cd $WORKSPACE
+		    export PYTHONPATH=$WORKSPACE
                     pytest tests/test_app.py \
                         -v \
                         --tb=short \
