@@ -52,6 +52,20 @@ pipeline {
                 }
             }
         }
+	stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        /opt/sonar-scanner/bin/sonar-scanner \
+                            -Dsonar.projectKey=techstore \
+                            -Dsonar.sources=. \
+                            -Dsonar.exclusions=venv/**,tests/**,**/__pycache__/** \
+                            -Dsonar.python.coverage.reportPaths=coverage.xml \
+                            -Dsonar.host.url=http://techstore-sonarqube:9000
+                    '''
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
