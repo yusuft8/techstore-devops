@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE    = 'techstore-app'
         DOCKER_HUB_USER = 'yusufft8'
         SONAR_HOST      = 'http://sonarqube:9000'
-	SONAR_TOKEN     = credentials('sonarqube-token')
+        SONAR_TOKEN     = credentials('sonarqube-token')
         SLACK_CHANNEL   = '#devops-techstore'
     }
 
@@ -36,7 +36,7 @@ pipeline {
                     . venv/bin/activate
                     mkdir -p test-results
                     cd $WORKSPACE
-		    export PYTHONPATH=$WORKSPACE
+                    export PYTHONPATH=$WORKSPACE
                     pytest tests/test_app.py \
                         -v \
                         --tb=short \
@@ -52,7 +52,8 @@ pipeline {
                 }
             }
         }
-     stage('SonarQube Analysis') {
+
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
@@ -113,29 +114,14 @@ pipeline {
                 """
             }
         }
-
-        
     }
 
-  post {
-    success {
-        echo "Pipeline basariyla tamamlandi!"
-    }
-    failure {
-        echo "Pipeline basarisiz!"
-    }
-    always {
-        sh "docker image prune -f --filter 'until=72h' || true"
-        cleanWs()
-    }
-}	
+    post {
+        success {
+            echo "Pipeline basariyla tamamlandi!"
+        }
         failure {
             echo "Pipeline basarisiz!"
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'danger',
-                message: "TechStore Deploy Basarisiz - Build #${env.BUILD_NUMBER} - ${env.BUILD_URL}console"
-            )
         }
         always {
             sh "docker image prune -f --filter 'until=72h' || true"
