@@ -117,15 +117,18 @@ pipeline {
         
     }
 
-    post {
-        success {
-            echo "Pipeline basariyla tamamlandi!"
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'good',
-                message: "TechStore Deploy Basarili - Build #${env.BUILD_NUMBER}"
-            )
-        }
+  post {
+    success {
+        echo "Pipeline basariyla tamamlandi!"
+    }
+    failure {
+        echo "Pipeline basarisiz!"
+    }
+    always {
+        sh "docker image prune -f --filter 'until=72h' || true"
+        cleanWs()
+    }
+}	
         failure {
             echo "Pipeline basarisiz!"
             slackSend(
